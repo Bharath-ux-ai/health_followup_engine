@@ -9,6 +9,7 @@ import { BookVisitModal } from "@/components/book-visit-modal";
 import { Badge } from "@/components/status";
 import { AppointmentsTable, CONTACT_OUTCOMES, FollowUpsTable } from "@/components/tables";
 import { Button, Card, CardHeader, Checkbox, EmptyState, ErrorState, Field, Input, Loading, Modal, Notice, Select } from "@/components/ui";
+import { PatientTimeline } from "@/components/patient-timeline";
 import { api, errorMessage } from "@/lib/api";
 import { fmtDateTime, fmtPhone } from "@/lib/format";
 import { useData } from "@/lib/hooks";
@@ -56,6 +57,14 @@ export default function PatientDetailPage() {
           Call {p.full_name.split(" ")[0]} on <a href={`tel:${p.phone}`} className="font-semibold underline">{fmtPhone(p.phone)}</a>, then mark the follow-up as contacted or book the visit.
         </Notice>
       )}
+
+      {/* Visual Patient Journey Timeline */}
+      <PatientTimeline
+        patient={p}
+        appointments={p.appointments}
+        followups={p.followups}
+        contacts={p.contacts}
+      />
 
       <Card>
         <CardHeader icon={<RotateCcw className="size-5" />} title="Follow-ups" subtitle="Set from a visit — open a past appointment below to add one" />

@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   AlertTriangle, BellRing, CalendarCheck2, CalendarClock, CalendarPlus, CalendarX2, CheckCircle2, Clock3, Copy, HeartHandshake,
-  ListChecks, RotateCcw, Send, Users,
+  ListChecks, QrCode, RotateCcw, Send, Users,
 } from "lucide-react";
 import { useAuth, useToast } from "@/components/providers";
 import { BookVisitModal } from "@/components/book-visit-modal";
 import { AppointmentsTable } from "@/components/tables";
 import { Button, Card, CardHeader, EmptyState, ErrorState, Input, Loading, PageHeader, StatCard } from "@/components/ui";
+import { ClinicQrModal } from "@/components/qr-modal";
+import { RoiCalculator } from "@/components/roi-calculator";
 import { api } from "@/lib/api";
 import { addDays, cx, fmtDateLong, fmtTime } from "@/lib/format";
 import { useData } from "@/lib/hooks";
@@ -43,6 +45,7 @@ export default function OverviewPage() {
   const [day, setDay] = useState<string | null>(null);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
   const [booking, setBooking] = useState<FollowUp | null>(null);
+  const [qrOpen, setQrOpen] = useState(false);
   const { data, error, loading, reload } = useData(() => api.get<Dashboard>("/dashboard", day ? { date: day } : undefined), [day]);
   const isAdmin = can("hospital.reports.view");
   const h = me?.hospital;
@@ -64,6 +67,9 @@ export default function OverviewPage() {
         subtitle={<>{fmtDateLong(today)}{data.demo_clock && <span className="ml-2 rounded bg-violet-100 px-1.5 py-0.5 text-[11px] font-bold text-violet-800">DEMO CLOCK</span>}</>}
         actions={
           <>
+            <Button variant="secondary" icon={<QrCode className="size-4" />} onClick={() => setQrOpen(true)}>
+              QR Standee
+            </Button>
             <Button variant="secondary" icon={<Copy className="size-4" />} onClick={() => { navigator.clipboard?.writeText(bookingUrl); toast.success("Booking link copied — share it on WhatsApp, Google profile or your website"); }}>
               Copy booking link
             </Button>
@@ -202,6 +208,13 @@ export default function OverviewPage() {
         </div>
       </div>
 
+      {/* Interactive ROI Calculator for Clinic Revenue Recovery */}
+      {isAdmin && (
+        <section className="pt-2">
+          <RoiCalculator />
+        </section>
+      )}
+
       {isAdmin && data.reminders.failed > 0 && (
         <Card className="border-danger/30 p-4 text-sm">
           <span className="font-bold text-danger">{data.reminders.failed} WhatsApp reminder{data.reminders.failed > 1 ? "s" : ""} failed.</span>{" "}
@@ -209,6 +222,15 @@ export default function OverviewPage() {
         </Card>
       )}
       <BookVisitModal fu={booking} today={today} onClose={() => setBooking(null)} onDone={reload} />
+      {h && (
+        <ClinicQrModal
+          open={qrOpen}
+          onClose={() => setQrOpen(false)}
+          hospitalName={h.name}
+          slug={h.slug}
+          city={h.city}
+        />
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContai
 import { ChevronLeft, ChevronRight, Download, HeartHandshake, Info, Printer, Save } from "lucide-react";
 import { useAuth, useToast } from "@/components/providers";
 import { Button, Card, CardHeader, ErrorState, Loading, Notice, PageHeader, StatCard } from "@/components/ui";
+import { RoiCalculator } from "@/components/roi-calculator";
 import { api, errorMessage } from "@/lib/api";
 import { monthLabel } from "@/lib/format";
 import { useData } from "@/lib/hooks";
@@ -151,6 +152,11 @@ export default function ReportsPage() {
               </div>
             </Card>
           </div>
+
+          {/* Interactive ROI Calculator for Clinic Revenue Recovery */}
+          <section className="pt-4">
+            <RoiCalculator />
+          </section>
         </div>
       )}
     </div>

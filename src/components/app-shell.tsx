@@ -3,13 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart3, Building2, CalendarCheck2, CalendarPlus, FlaskConical, LayoutDashboard, LogOut, Menu, MessageCircle,
-  RotateCcw, Settings, ShieldCheck, Users, X, KeyRound, MapPin,
+  RotateCcw, Settings, ShieldCheck, Users, X, KeyRound, MapPin, Search, QrCode,
 } from "lucide-react";
 import { useAuth, useToast } from "@/components/providers";
 import { Button, Field, Input, Loading, Modal } from "@/components/ui";
+import { CommandPalette } from "@/components/command-palette";
+import { ClinicQrModal } from "@/components/qr-modal";
 import { api, errorMessage } from "@/lib/api";
 import { cx, fmtClock } from "@/lib/format";
 
@@ -38,6 +40,19 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   if (loading || !me) {
     return (
@@ -84,6 +99,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       )}
+
+      {/* Quick Search & Actions (Spotlight Ctrl+K trigger) */}
+      <div className="px-3 pb-2 space-y-1.5">
+        <button
+          type="button"
+          onClick={() => setPaletteOpen(true)}
+          className="flex w-full items-center justify-between rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 py-2 text-xs font-semibold text-muted shadow-xs transition-all hover:border-violet-300 hover:bg-white hover:text-ink cursor-pointer"
+        >
+          <span className="flex items-center gap-2">
+            <Search className="size-3.5 text-slate" />
+            <span>Search or command...</span>
+          </span>
+          <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] font-bold text-slate shadow-xs">
+            Ctrl K
+          </kbd>
+        </button>
+        {h && (
+          <button
+            type="button"
+            onClick={() => setQrOpen(true)}
+            className="flex w-full items-center gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-all hover:bg-violet-50 hover:text-violet-800 hover:border-violet-200 cursor-pointer"
+          >
+            <QrCode className="size-3.5 text-violet-600" />
+            <span>Reception QR Standee</span>
+          </button>
+        )}
+      </div>
 
       {/* Nav links */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-1" aria-label="Main">
@@ -190,11 +232,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Image src="/brand/logo-mark.png" alt="" width={32} height={24} className="h-6 w-auto" />
           <span className="truncate text-sm font-bold text-ink">{h?.name || "TEC THA Platform"}</span>
         </div>
-        {h?.is_demo && (
-          <span className="rounded-md bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-800">
-            DEMO
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setPaletteOpen(true)}
+            aria-label="Search"
+            className="rounded-lg p-1.5 text-slate hover:bg-slate-100 hover:text-ink transition-colors cursor-pointer"
+          >
+            <Search className="size-5" />
+          </button>
+          {h?.is_demo && (
+            <span className="rounded-md bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-800">
+              DEMO
+            </span>
+          )}
+        </div>
       </header>
 
       {/* Interactive Top Demo Ribbon */}
@@ -207,6 +258,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
 
       <ChangePassword open={pwOpen} onClose={() => setPwOpen(false)} />
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onOpenQr={() => setQrOpen(true)}
+      />
+      {h && (
+        <ClinicQrModal
+          open={qrOpen}
+          onClose={() => setQrOpen(false)}
+          hospitalName={h.name}
+          slug={h.slug}
+          city={h.city}
+        />
+      )}
     </div>
   );
 }
