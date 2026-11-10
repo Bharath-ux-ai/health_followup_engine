@@ -62,33 +62,38 @@ export default function PublicBookingPage() {
   return (
     <Shell hospital={h}>
       {done ? (
-        <Card className="animate-rise overflow-hidden">
-          <div className="bg-ok-50 px-6 py-6 text-center">
-            <div className="mx-auto grid size-12 place-items-center rounded-full bg-ok text-white"><Check className="size-6" /></div>
-            <h2 className="mt-3 text-xl font-bold">Appointment booked</h2>
-            <p className="mt-1 text-sm text-muted">Please keep your appointment ID for reference.</p>
+        <Card className="animate-rise overflow-hidden border-emerald-200/80 shadow-md">
+          <div className="bg-gradient-to-b from-emerald-600 to-emerald-700 px-6 py-8 text-center text-white">
+            <div className="mx-auto grid size-14 place-items-center rounded-full bg-white text-emerald-600 shadow-md">
+              <Check className="size-8 stroke-[3]" />
+            </div>
+            <h2 className="mt-4 text-2xl font-extrabold tracking-tight">Appointment Confirmed!</h2>
+            <p className="mt-1 text-sm text-emerald-100">Please note your appointment reference ID.</p>
+            <div className="mt-4 inline-block rounded-2xl bg-white/20 backdrop-blur-xs px-5 py-2.5 border border-white/30">
+              <span className="text-[11px] uppercase tracking-wider text-emerald-100 block font-bold">Appointment ID</span>
+              <span className="font-mono text-2xl font-extrabold tracking-widest text-white">{done.reference}</span>
+            </div>
           </div>
-          <dl className="divide-y divide-silver px-6 text-sm">
+          <dl className="divide-y divide-slate-100 px-6 py-2 text-sm bg-white">
             {[
-              ["Appointment ID", <span key="r" className="tabular font-mono text-base font-bold tracking-wider text-violet-800">{done.reference}</span>],
               ["Doctor", done.doctor],
               ["Date", fmtDateLong(done.date)],
               ["Time", fmtTime(done.start_time)],
               ["Hospital", <span key="h">{done.hospital}{done.address && <span className="block text-xs text-muted">{done.address}</span>}</span>],
             ].map(([k, v]) => (
-              <div key={k as string} className="flex items-start justify-between gap-4 py-3">
-                <dt className="text-muted">{k}</dt>
-                <dd className="text-right font-semibold">{v}</dd>
+              <div key={k as string} className="flex items-start justify-between gap-4 py-3.5">
+                <dt className="text-muted font-medium">{k}</dt>
+                <dd className="text-right font-bold text-ink">{v}</dd>
               </div>
             ))}
           </dl>
-          <div className="px-6 pb-6">
+          <div className="px-6 pb-6 pt-2 bg-white">
             {done.whatsapp_reminder ? (
-              <Notice tone="ok" title="WhatsApp reminder">We will send you a reminder the day before your visit, with options to confirm or reschedule.</Notice>
+              <Notice tone="ok" title="WhatsApp reminder active">We will send you a reminder on WhatsApp the day before your visit, with one-tap confirm and reschedule options.</Notice>
             ) : (
               <Notice tone="info">You chose not to receive WhatsApp reminders. Please note your appointment time.</Notice>
             )}
-            <Button variant="secondary" className="mt-4 w-full" onClick={() => { setDone(null); setStep(1); setDoctor(null); setDate(null); setTime(null); setName(""); setPhone(""); }}>
+            <Button variant="secondary" className="mt-5 w-full h-11 text-[14px]" onClick={() => { setDone(null); setStep(1); setDoctor(null); setDate(null); setTime(null); setName(""); setPhone(""); }}>
               Book another appointment
             </Button>
           </div>
@@ -96,12 +101,31 @@ export default function PublicBookingPage() {
       ) : !h.booking_enabled ? (
         <Card className="p-6"><Notice tone="warn" title="Online booking is closed">Please call {h.phone || "the hospital"} to book an appointment.</Notice></Card>
       ) : (
-        <Card className="overflow-hidden">
-          <ol className="flex border-b border-silver text-[12px] font-semibold">
+        <Card className="overflow-hidden shadow-md">
+          <ol className="flex border-b border-slate-100 bg-slate-50/70 p-1.5 text-[12px] font-bold">
             {["Doctor", "Date & time", "Your details"].map((s, i) => (
-              <li key={s} className={cx("flex flex-1 items-center justify-center gap-2 py-3", step === i + 1 ? "text-violet-800" : step > i + 1 ? "text-ok" : "text-slate")}>
-                <span className={cx("grid size-5 place-items-center rounded-full text-[11px]", step === i + 1 ? "bg-violet-700 text-white" : step > i + 1 ? "bg-ok text-white" : "bg-silver text-muted")}>
-                  {step > i + 1 ? <Check className="size-3" /> : i + 1}
+              <li
+                key={s}
+                className={cx(
+                  "flex flex-1 items-center justify-center gap-2 py-2 rounded-xl transition-all",
+                  step === i + 1
+                    ? "bg-white text-violet-800 shadow-xs ring-1 ring-slate-200/70"
+                    : step > i + 1
+                    ? "text-emerald-700"
+                    : "text-slate-400"
+                )}
+              >
+                <span
+                  className={cx(
+                    "grid size-5 place-items-center rounded-full text-[11px] font-bold",
+                    step === i + 1
+                      ? "bg-violet-700 text-white"
+                      : step > i + 1
+                      ? "bg-emerald-600 text-white"
+                      : "bg-slate-200 text-slate-500"
+                  )}
+                >
+                  {step > i + 1 ? <Check className="size-3 stroke-[3]" /> : i + 1}
                 </span>
                 <span className="hidden sm:inline">{s}</span>
               </li>
@@ -110,20 +134,30 @@ export default function PublicBookingPage() {
           <div className="p-5 sm:p-6">
             {step === 1 && (
               <div className="animate-rise">
-                <h2 className="text-lg font-bold">Choose a doctor</h2>
-                <div className="mt-4 grid gap-2.5">
+                <h2 className="text-xl font-extrabold tracking-tight text-ink">Choose a doctor</h2>
+                <p className="mt-1 text-sm text-muted">Select a specialist for your consultation.</p>
+                <div className="mt-5 grid gap-3">
                   {h.doctors.map((d) => (
                     <button
                       key={d.id}
                       onClick={() => { setDoctor(d); setDate(null); setTime(null); setStep(2); }}
-                      className={cx("flex items-center gap-4 rounded-xl border p-4 text-left transition-colors hover:border-violet hover:bg-violet-50/50", doctor?.id === d.id ? "border-violet bg-violet-50" : "border-silver-2")}
+                      className={cx(
+                        "group flex items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-150 cursor-pointer select-none",
+                        doctor?.id === d.id
+                          ? "border-violet-600 bg-violet-50/80 ring-2 ring-violet-500/20 shadow-sm"
+                          : "border-slate-200/90 bg-white hover:border-violet-300 hover:bg-slate-50/70 shadow-xs hover:-translate-y-0.5",
+                      )}
                     >
-                      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-violet-50 text-violet-700"><Stethoscope className="size-5" /></span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-bold">{d.name}</span>
-                        <span className="block text-[13px] text-muted">{d.specialty}</span>
+                      <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-violet-100 text-violet-700 font-bold group-hover:bg-violet-700 group-hover:text-white transition-colors shadow-xs">
+                        <Stethoscope className="size-5.5" />
                       </span>
-                      <span className="text-xs text-muted">{weekdaysLabel(d.weekdays)}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-bold text-ink text-[15px]">{d.name}</span>
+                        <span className="block text-[13px] text-muted font-medium">{d.specialty}</span>
+                      </span>
+                      <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 group-hover:bg-violet-100 group-hover:text-violet-800 transition-colors">
+                        {weekdaysLabel(d.weekdays)}
+                      </span>
                     </button>
                   ))}
                   {!h.doctors.length && <Notice tone="info">No doctors are taking online bookings right now. Please call the hospital.</Notice>}
@@ -192,24 +226,30 @@ function BackLink({ onClick }: { onClick: () => void }) {
 
 function Shell({ hospital, children }: { hospital?: HospitalPage; children: React.ReactNode }) {
   return (
-    <div className="min-h-dvh bg-off">
-      <header className="border-b border-silver bg-white">
-        <div className="mx-auto flex max-w-xl items-center gap-4 px-5 py-5">
-          <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-700"><Stethoscope className="size-6" /></div>
+    <div className="min-h-dvh bg-gradient-to-b from-slate-50 via-off to-slate-100/60 text-ink">
+      <header className="border-b border-slate-200/80 bg-white/95 backdrop-blur-md sticky top-0 z-10 shadow-xs">
+        <div className="mx-auto flex max-w-xl items-center gap-4 px-5 py-4">
+          <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-xs">
+            <Stethoscope className="size-6" />
+          </div>
           <div className="min-w-0">
-            <h1 className="truncate text-lg font-bold">{hospital?.name || "Book an appointment"}</h1>
+            <h1 className="truncate text-lg font-extrabold tracking-tight text-ink">{hospital?.name || "Book an appointment"}</h1>
             {hospital && (
-              <p className="flex flex-wrap items-center gap-x-3 text-[13px] text-muted">
-                {hospital.city && <span className="flex items-center gap-1"><MapPin className="size-3.5" />{hospital.city}</span>}
-                {hospital.phone && <a href={`tel:${hospital.phone}`} className="flex items-center gap-1 hover:text-ink"><Phone className="size-3.5" />{fmtPhone(hospital.phone)}</a>}
+              <p className="flex flex-wrap items-center gap-x-3 text-[13px] text-muted font-medium">
+                {hospital.city && <span className="flex items-center gap-1"><MapPin className="size-3.5 text-slate" />{hospital.city}</span>}
+                {hospital.phone && <a href={`tel:${hospital.phone}`} className="flex items-center gap-1 hover:text-ink transition-colors"><Phone className="size-3.5 text-slate" />{fmtPhone(hospital.phone)}</a>}
               </p>
             )}
           </div>
         </div>
-        {hospital?.is_demo && <div className="bg-violet-50 py-1.5 text-center text-[12px] font-semibold text-violet-800">Demo hospital — fictional data</div>}
+        {hospital?.is_demo && (
+          <div className="border-t border-violet-100 bg-violet-50/90 py-1.5 px-4 text-center text-[12px] font-bold text-violet-800">
+            🏥 TEC THA Multispeciality Clinic Demo · Live Slot Booking
+          </div>
+        )}
       </header>
-      <main className="mx-auto max-w-xl px-4 py-6">{children}</main>
-      <footer className="flex items-center justify-center gap-2 pb-8 text-[11px] text-muted">
+      <main className="mx-auto max-w-xl px-4 py-8">{children}</main>
+      <footer className="flex items-center justify-center gap-2 pb-10 text-[12px] text-muted font-medium">
         <Image src="/brand/logo-mark.png" alt="" width={22} height={16} className="h-3.5 w-auto opacity-70" /> Powered by TEC THA Follow-Up Engine
       </footer>
     </div>

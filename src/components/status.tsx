@@ -3,19 +3,26 @@ import type { AppointmentStatus, FollowUp, FollowUpStatus, Reminder } from "@/li
 
 type Tone = "neutral" | "violet" | "ok" | "warn" | "danger" | "info" | "dark";
 const TONES: Record<Tone, string> = {
-  neutral: "bg-silver/70 text-ink-2",
-  violet: "bg-violet-50 text-violet-800 ring-1 ring-violet/20",
-  ok: "bg-ok-50 text-ok ring-1 ring-ok/20",
-  warn: "bg-warn-50 text-warn ring-1 ring-warn/25",
-  danger: "bg-danger text-white",
-  info: "bg-info-50 text-info ring-1 ring-info/20",
-  dark: "bg-ink text-white",
+  neutral: "bg-slate-100 text-slate-700 ring-1 ring-slate-200/80",
+  violet: "bg-violet-50 text-violet-700 ring-1 ring-violet-200/80",
+  ok: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/80",
+  warn: "bg-amber-50 text-amber-800 ring-1 ring-amber-200/80",
+  danger: "bg-rose-50 text-rose-700 ring-1 ring-rose-300 font-bold",
+  info: "bg-blue-50 text-blue-700 ring-1 ring-blue-200/80",
+  dark: "bg-slate-900 text-white shadow-xs",
 };
 
 export function Badge({ tone = "neutral", children, dot, className }: { tone?: Tone; children: React.ReactNode; dot?: boolean; className?: string }) {
   return (
-    <span className={cx("inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[12px] font-semibold whitespace-nowrap", TONES[tone], className)}>
-      {dot && <span className="size-1.5 rounded-full bg-current" />}
+    <span className={cx("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[12px] font-semibold tracking-tight whitespace-nowrap shadow-xs", TONES[tone], className)}>
+      {dot && (
+        <span
+          className={cx(
+            "size-1.5 rounded-full",
+            tone === "danger" ? "bg-rose-500 animate-pulse" : tone === "ok" ? "bg-emerald-500" : tone === "violet" ? "bg-violet-500" : tone === "warn" ? "bg-amber-500" : "bg-current",
+          )}
+        />
+      )}
       {children}
     </span>
   );

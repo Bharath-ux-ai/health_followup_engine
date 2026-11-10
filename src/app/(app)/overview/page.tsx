@@ -118,12 +118,25 @@ export default function OverviewPage() {
               </div>
             }
           />
-          <div className="flex gap-1.5 overflow-x-auto border-b border-silver px-5 py-2.5">
+          <div className="flex gap-2 overflow-x-auto border-b border-slate-100 px-5 py-3 bg-slate-50/50">
             {FILTERS.map((f) => {
               const n = f.key === "all" ? data.day.total : data.day.counts[f.key];
+              const isActive = filter === f.key;
               return (
-                <button key={f.key} onClick={() => setFilter(f.key)} className={cx("shrink-0 rounded-full border px-3 py-1 text-[12px] font-semibold", filter === f.key ? "border-ink bg-ink text-white" : "border-silver-2 text-ink-2 hover:border-ink-2")}>
-                  {f.label} <span className="tabular opacity-70">{n}</span>
+                <button
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
+                  className={cx(
+                    "shrink-0 inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-[12px] font-bold transition-all select-none cursor-pointer",
+                    isActive
+                      ? "bg-slate-900 text-white shadow-xs"
+                      : "bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-100 hover:border-slate-300",
+                  )}
+                >
+                  <span>{f.label}</span>
+                  <span className={cx("tabular rounded-full px-1.5 py-0.2 text-[10px]", isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 font-extrabold")}>
+                    {n}
+                  </span>
                 </button>
               );
             })}
@@ -136,23 +149,28 @@ export default function OverviewPage() {
         </Card>
 
         <div className="grid content-start gap-6 lg:grid-cols-2 2xl:grid-cols-1">
-          <Card className={cx(data.followups.attention.length > 0 && "border-danger/40")}>
-            <CardHeader icon={<AlertTriangle className="size-5 text-danger" />} title={<span className="text-danger">Needs a call</span>} subtitle="Unconfirmed or overdue follow-ups" action={<Link href="/follow-ups?view=attention" className="text-[13px] font-semibold text-violet-700 hover:underline">View all</Link>} />
+          <Card className={cx(data.followups.attention.length > 0 && "border-rose-300 ring-2 ring-rose-500/10 shadow-sm")}>
+            <CardHeader
+              icon={<AlertTriangle className="size-5 text-rose-600" />}
+              title={<span className="text-rose-600 font-extrabold tracking-tight">Needs a call</span>}
+              subtitle="Unconfirmed or overdue follow-ups"
+              action={<Link href="/follow-ups?view=attention" className="text-[13px] font-bold text-violet-700 hover:text-violet-800 hover:underline">View all</Link>}
+            />
             {data.followups.attention.length ? (
-              <ul className="divide-y divide-silver">
+              <ul className="divide-y divide-rose-100">
                 {data.followups.attention.slice(0, 6).map((f) => (
-                  <li key={f.id} className="flex items-center gap-3 border-l-4 border-l-danger bg-danger-50/60 px-4 py-3">
+                  <li key={f.id} className="flex items-center gap-3 border-l-4 border-l-rose-500 bg-rose-50/40 px-4 py-3 hover:bg-rose-50/70 transition-colors">
                     <div className="min-w-0 flex-1">
-                      <Link href={`/patients/${f.patient.id}`} className="block truncate text-sm font-bold text-ink hover:underline">{f.patient.full_name}</Link>
-                      <div className="text-xs text-danger">{f.attention === "overdue" ? "Overdue — no visit recorded" : "No response to reminders"} · due {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(f.due_date + "T12:00:00Z"))}</div>
+                      <Link href={`/patients/${f.patient.id}`} className="block truncate text-sm font-bold text-ink hover:text-violet-700">{f.patient.full_name}</Link>
+                      <div className="text-xs font-semibold text-rose-600">{f.attention === "overdue" ? "Overdue — no visit recorded" : "No response to reminders"} · due {new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(f.due_date + "T12:00:00Z"))}</div>
                     </div>
-                    <a href={`tel:${f.patient.phone}`} className="rounded-lg bg-white px-2.5 py-1.5 text-xs font-bold text-danger ring-1 ring-danger/30 hover:bg-danger hover:text-white">Call</a>
+                    <a href={`tel:${f.patient.phone}`} className="rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-rose-600 border border-rose-200 shadow-xs hover:bg-rose-600 hover:text-white transition-all">Call</a>
                     <Button size="sm" variant="secondary" onClick={() => setBooking(f)}>Book</Button>
                   </li>
                 ))}
               </ul>
             ) : (
-              <EmptyState icon={<CheckCircle2 className="size-5" />} title="All follow-ups on track" text="Patients who don't respond or miss their date will appear here in red." />
+              <EmptyState icon={<CheckCircle2 className="size-5 text-emerald-600" />} title="All follow-ups on track" text="Patients who don't respond or miss their date will appear here in red." />
             )}
           </Card>
 

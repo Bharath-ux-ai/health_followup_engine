@@ -100,15 +100,25 @@ export default function DemoPage() {
 
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         <div className="space-y-6">
-          <Card className="overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-4 bg-ink px-6 py-5 text-white">
+          <Card className="overflow-hidden border-slate-800 shadow-lg">
+            <div className="flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 px-6 py-5 text-white">
               <div>
-                <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-violet uppercase"><AlarmClock className="size-4" /> {s.demo_clock ? "Demo clock" : "Real time"} · Asia/Kolkata</div>
-                <div className="tabular mt-1 text-2xl font-bold">{fmtClock(s.now, tz)}</div>
+                <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-violet-400 uppercase">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-500" />
+                  </span>
+                  <AlarmClock className="size-4" /> {s.demo_clock ? "Demo clock simulation" : "Real time"} · Asia/Kolkata
+                </div>
+                <div className="tabular mt-1.5 font-mono text-3xl font-extrabold tracking-tight text-white">
+                  {fmtClock(s.now, tz)}
+                </div>
               </div>
-              <Button variant="primary" icon={<Send className="size-4" />} loading={busy === "run"} onClick={runReminders}>Trigger due reminders</Button>
+              <Button variant="primary" icon={<Send className="size-4" />} loading={busy === "run"} onClick={runReminders} className="shadow-md shadow-violet-500/30">
+                Trigger due reminders
+              </Button>
             </div>
-            <div className="flex flex-wrap items-center gap-2 p-4">
+            <div className="flex flex-wrap items-center gap-2 p-4 bg-white">
               <Button size="sm" variant="secondary" icon={<Clock3 className="size-3.5" />} loading={busy === "h"} onClick={() => setClock({ advance_hours: 1 }, "h")}>+1 hour</Button>
               <Button size="sm" variant="secondary" icon={<FastForward className="size-3.5" />} loading={busy === "d1"} onClick={() => setClock({ advance_days: 1 }, "d1")}>+1 day</Button>
               <Button size="sm" variant="secondary" icon={<FastForward className="size-3.5" />} loading={busy === "d7"} onClick={() => setClock({ advance_days: 7 }, "d7")}>+7 days</Button>
@@ -117,7 +127,9 @@ export default function DemoPage() {
                 <Button size="sm" disabled={!custom} loading={busy === "set"} onClick={() => setClock({ set_to: custom }, "set")}>Set</Button>
               </div>
             </div>
-            <p className="border-t border-silver px-4 py-2.5 text-xs text-muted">Moving the clock does not send anything by itself — press <b>Trigger due reminders</b> (the background worker also runs every 30 seconds).</p>
+            <p className="border-t border-slate-100 bg-slate-50/60 px-5 py-2.5 text-xs text-muted">
+              Moving the clock does not send anything by itself — press <b>Trigger due reminders</b> (the background worker also runs automatically).
+            </p>
           </Card>
 
           <Card>

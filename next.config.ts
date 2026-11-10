@@ -10,9 +10,6 @@ const nextConfig: NextConfig = {
   // Docker images use the standalone server (NEXT_OUTPUT=standalone); `next start` is used locally.
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
