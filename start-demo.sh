@@ -34,7 +34,7 @@ alembic upgrade head
 DEMO_PASSWORD="$DEMO_PASSWORD" python -m scripts.seed_demo
 uvicorn app.main:app --host 127.0.0.1 --port 8000 > ../api.log 2>&1 &
 API_PID=$!
-cd ../frontend
+cd ..
 
 echo "▶ Frontend build (first run takes a minute)"
 [ -d node_modules ] || npm ci

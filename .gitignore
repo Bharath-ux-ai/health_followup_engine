@@ -14,8 +14,8 @@ __pycache__/
 backend/.venv/
 .pytest_cache/
 # node
-frontend/node_modules/
-frontend/.next/
-frontend/next-env.d.ts
+node_modules/
+.next/
+next-env.d.ts
 # e2e output
 e2e/screenshots/

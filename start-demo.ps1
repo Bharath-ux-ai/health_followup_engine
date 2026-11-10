@@ -41,7 +41,7 @@ print('  created backend/.env')
 $env:DEMO_PASSWORD = $DemoPassword
 & $py -m scripts.seed_demo
 $api = Start-Process -FilePath $py -ArgumentList "-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8000" -PassThru -NoNewWindow -RedirectStandardOutput ..\api.log -RedirectStandardError ..\api-err.log
-Set-Location ..\frontend
+Set-Location ..
 
 Write-Host "> Frontend build (first run takes a minute)"
 if (-not (Test-Path node_modules)) { npm ci }
