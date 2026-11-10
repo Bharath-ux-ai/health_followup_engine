@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/* TEC THA brand: Graphite Ink & Chrome Silver carry the brand; Signal Violet is for accents and calls to action. */
+@theme {
+  --color-ink: #121214;
+  --color-ink-2: #2a2b30;
+  --color-muted: #5f6672;
+  --color-slate: #9ca2ac;
+  --color-silver: #e7e9ec;
+  --color-silver-2: #d6d9de;
+  --color-off: #f5f5f7;
+  --color-violet: #9b5de5;
+  --color-violet-700: #7a3cc8; /* AA-contrast shade for text and filled buttons */
+  --color-violet-800: #622fa5;
+  --color-violet-50: #f6f0fe;
+  --color-violet-100: #ece0fc;
+  --color-ok: #138a5b;
+  --color-ok-50: #e8f6ef;
+  --color-warn: #b26a00;
+  --color-warn-50: #fdf3e2;
+  --color-danger: #d32f2f;
+  --color-danger-50: #fdecec;
+  --color-info: #2563c9;
+  --color-info-50: #e9f0fc;
+  --font-sans: "Plus Jakarta Sans Variable", "Noto Sans Tamil", ui-sans-serif, system-ui, sans-serif;
+  --font-tamil: "Noto Sans Tamil", "Plus Jakarta Sans Variable", sans-serif;
+  --shadow-card: 0 1px 2px rgb(18 18 20 / 0.04), 0 1px 3px rgb(18 18 20 / 0.06);
+  --shadow-pop: 0 10px 30px -10px rgb(18 18 20 / 0.25);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--color-off);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+:lang(ta), .tamil { font-family: var(--font-tamil); }
+
+:focus-visible { outline: 2px solid var(--color-violet); outline-offset: 2px; }
+::selection { background: var(--color-violet-100); }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* WhatsApp-style simulator surface */
+.wa-wall {
+  background-color: #efeae2;
+  background-image: radial-gradient(rgb(0 0 0 / 0.035) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+@keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.animate-rise { animation: rise 180ms ease-out both; }
+@media (prefers-reduced-motion: reduce) { .animate-rise { animation: none; } }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: white; }
+  .print-card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
+}

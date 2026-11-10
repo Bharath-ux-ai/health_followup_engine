@@ -1,0 +1,21 @@
+# secrets & local data
+.env
+backend/.env
+*.db
+*.db-*
+!backend/tectha-demo.db
+backups/
+api.log
+api-err.log
+web-build.log
+# python
+__pycache__/
+*.pyc
+backend/.venv/
+.pytest_cache/
+# node
+frontend/node_modules/
+frontend/.next/
+frontend/next-env.d.ts
+# e2e output
+e2e/screenshots/

@@ -1,0 +1,17 @@
+# HTTPS is automatic for a real domain (Let's Encrypt). Meta webhooks require public HTTPS.
+{$DOMAIN} {
+	encode gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+	# API (including /api/webhooks/whatsapp) goes straight to FastAPI
+	handle /api/* {
+		reverse_proxy api:8000
+	}
+	handle {
+		reverse_proxy web:3000
+	}
+}
